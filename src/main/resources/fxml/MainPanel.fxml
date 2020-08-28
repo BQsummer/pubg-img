@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane hbarPolicy="ALWAYS" hmax="111.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bqsummer.fx.MainPanel">
+  <content>
+    <AnchorPane minHeight="0.0" minWidth="0.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <children>
+            <HBox fx:id="hBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="alpha" />
+                              <Slider fx:id="alphaSlider" majorTickUnit="10.0" max="250.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="0" />
+                              <Text fx:id="alphaLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="beta" />
+                              <Slider fx:id="betaSlider" majorTickUnit="10.0" max="250.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" value="133.0" />
+                              <Text fx:id="betaLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="ksize" />
+                              <Slider fx:id="ksizeSlider" blockIncrement="2.0" majorTickUnit="2.0" max="15.0" min="1.0" minorTickCount="0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="3.0" />
+                              <Text fx:id="ksizeLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="thresh" />
+                              <Slider fx:id="threshSlider" majorTickUnit="10.0" max="250.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="47" />
+                              <Text fx:id="threshLabel" />
+                           </children>
+                        </HBox>
+<!--                        <HBox maxWidth="1000.0">-->
+<!--                           <children>-->
+<!--                              <Label text="threshold1" />-->
+<!--                              <Slider fx:id="threshold1Slider" majorTickUnit="10.0" max="250.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />-->
+<!--                              <Text fx:id="threshold1Label" />-->
+<!--                           </children>-->
+<!--                        </HBox>-->
+<!--                        <HBox maxWidth="1000.0">-->
+<!--                           <children>-->
+<!--                              <Label text="threshold2" />-->
+<!--                              <Slider fx:id="threshold2Slider" majorTickUnit="10.0" max="250.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="200.0" />-->
+<!--                              <Text fx:id="threshold2Label" />-->
+<!--                           </children>-->
+<!--                        </HBox>-->
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="apertureSize" />
+                              <Slider fx:id="apertureSizeSlider" blockIncrement="2.0" majorTickUnit="2.0" max="7.0" min="3.0" minorTickCount="0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="7.0" />
+                              <Text fx:id="apertureSizeLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="maxArea" />
+                              <Slider fx:id="maxAreaSlider" majorTickUnit="10.0" max="200.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="97.5" />
+                              <Text fx:id="maxAreaLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="minArea" />
+                              <Slider fx:id="minAreaSlider" majorTickUnit="10.0" max="20.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                              <Text fx:id="minAreaLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="variance" />
+                              <Slider fx:id="varianceSlider" blockIncrement="0.1" majorTickUnit="0.1" max="1.0" minorTickCount="0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                              <Text fx:id="varianceLabel" />
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <ImageView fx:id="normalizeImg" fitHeight="1152.0" fitWidth="307.2" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="medianBlurImg" fitHeight="1200.0" fitWidth="307.2" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="thresholdImg" fitHeight="1200.0" fitWidth="307.2" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="cannyImg" fitHeight="1200.0" fitWidth="307.2" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="filteredImg" fitHeight="1200.0" fitWidth="307.2" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="finalImg" fitHeight="1200.0" fitWidth="307.2" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+               </children></HBox>
+         </children></AnchorPane>
+  </content>
+</ScrollPane>
