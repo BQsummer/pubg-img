@@ -19,6 +19,22 @@
                      <children>
                         <HBox maxWidth="1000.0">
                            <children>
+                              <Label text="image " />
+                              <Button fx:id="next" mnemonicParsing="false" text="next" />
+                              <Button fx:id="pre" mnemonicParsing="false" text="pre" />
+                              <Text fx:id="imageName" />
+                              <Button fx:id="print" mnemonicParsing="false" text="print" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
+                              <Label text="x position" />
+                              <Slider fx:id="xPosition" majorTickUnit="0.1" max="1.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="0" />
+                              <Text fx:id="xPositionLabel" />
+                           </children>
+                        </HBox>
+                        <HBox maxWidth="1000.0">
+                           <children>
                               <Label text="alpha" />
                               <Slider fx:id="alphaSlider" majorTickUnit="10.0" max="250.0" prefHeight="32.0" prefWidth="700.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="0" />
                               <Text fx:id="alphaLabel" />

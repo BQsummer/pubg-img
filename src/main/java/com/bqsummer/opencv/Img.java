@@ -10,10 +10,8 @@ import org.opencv.imgproc.Moments;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Img {
 
@@ -36,12 +34,6 @@ public class Img {
     public static Mat normalize(Mat img, int alpha, int beta) {
         Mat effected = img.clone();
         Core.normalize(img, effected, alpha, beta, Core.NORM_MINMAX);
-        return effected;
-    }
-
-    public static Mat medianBlur(Mat img, int ksize) {
-        Mat effected = img.clone();
-        Imgproc.medianBlur(img, effected,ksize);
         return effected;
     }
 
@@ -95,76 +87,59 @@ public class Img {
 
     }
 
-    public static Mat drawContours(Size size, List<Point> filtered) {
-        Mat filteredImg = Mat.zeros(size, CvType.CV_8UC3);
-        for(Point point : filtered) {
-            Scalar color = new Scalar(255, 255, 0);
-            Imgproc.circle(filteredImg, point, 4, color, -1);
-        }
-        return filteredImg;
-    }
-
-    public static List<Point> filterContours(Size size, List<Point> filtered, double absXDelta, double absYDelta, double slope) {
-        Map<Point, Integer> values = new HashMap<>();
-        // 向上连续点的集合
-        Map<Point, List<Point>> lines = new HashMap<>();
-        for(int i = 0; i < filtered.size(); i++) {
-            int value = 0;
-            Point next = filtered.get(i);
-            List<Point> line = new ArrayList<>();
-            line.add(filtered.get(i));
-            Boolean isFind = null;
-            while(isFind == null || isFind) {
-                isFind = false;
-                for(int j = 0; j < filtered.size(); j++) {
-                    // 向上寻找相近点
-                    if(filtered.get(j).y < next.y && Math.abs(next.y- filtered.get(j).y) < absXDelta &&  Math.abs(next.x- filtered.get(j).x) < absYDelta && (Math.abs(next.y- filtered.get(j).y)/Math.abs(next.x- filtered.get(j).x) > slope)) {
-                        value ++;
-                        next = filtered.get(j);
-                        isFind = true;
-                        line.add(filtered.get(j));
-                        break;
-                    }
+    /**
+     * 过滤连续点. 连续的定义: 相邻的点x轴和y轴的绝对值小于absXDelta和absYDelta, 且斜率大于slope
+     * @param filtered
+     * @param absXDelta
+     * @param absYDelta
+     * @param slope
+     * @return
+     */
+    public static List<Point> filterContours(List<Point> filtered, double absXDelta, double absYDelta, double slope) {
+        List<Point> sorted = filtered.stream().sorted(Comparator.comparing(e -> e.y)).collect(Collectors.toList());
+        Map<Point, List<Point>> map = new HashMap<>();
+        for (int i = 0; i < sorted.size(); i++) {
+            map.computeIfAbsent(sorted.get(i), k -> new ArrayList<>());
+            for (int j = i + 1; j < sorted.size(); j++) {
+                if (isContinuous(sorted.get(i), sorted.get(j), absXDelta, absYDelta, slope)) {
+                    map.get(sorted.get(i)).add(sorted.get(j));
                 }
             }
-            values.put(filtered.get(i), value);
-            lines.put(filtered.get(i), line);
         }
-
-        // 最大连续点的集合
-        int max = 0;
-        Point maxPoint = null;
-        for(Map.Entry<Point, Integer> entry : values.entrySet()) {
-            if(entry.getValue() > max) {
-                max = entry.getValue();
-                maxPoint = entry.getKey();
-            }
-        }
-        return lines.get(maxPoint);
-
+        return findLongestSegment(filtered, map);
 
     }
 
-    public static List<Point> getShootPoint(Mat mat, String fileName) {
-        mat = mat.submat(0, mat.height()-80, (int) (0.65f * mat.width()),(int) (0.8f * mat.width()));
-        mat = Img.cvtColor(mat);
-        mat = Img.normalize(mat, 0, 250);
-        //Imgcodecs.imwrite("dist\\picb-normalize-" + fileName + ".PNG", img);
-        Mat medianBlurImg = Img.erode(mat, 3);
-        //Imgcodecs.imwrite("dist\\picb-medianBlur-" + fileName + ".PNG", medianBlurImg);
-        Mat thresholdImg = Img.threshold(medianBlurImg, 47, 255);
-        //Imgcodecs.imwrite("dist\\picb-threshold-" + fileName + ".PNG", thresholdImg);
-        Mat cannyImg = Img.canny(thresholdImg, 255, 255, 7);
-        //Imgcodecs.imwrite("dist\\picb-canny-" + fileName + ".PNG", cannyImg);
-        List<Point> points = Img.findContours(cannyImg, 100, 1, 1);
-        for(Point point : points) {
-            Scalar color = new Scalar(255, 255, 0);
-            Imgproc.circle(cannyImg, point, 4, color, -1);
+    public static List<Point> findLongestSegment(List<Point> points, Map<Point, List<Point>> graph) {
+        List<Point> result = new ArrayList<>();
+        for (Point p : points) {
+            List<Point> path = dfs(graph, p, new HashSet<>(), new ArrayList<>());
+            if (path.size() > result.size()) {
+                result = path;
+            }
         }
-        List<Point> filterContours = Img.filterContours(mat.size(), points, 70, 70, 1.5);
-        Mat line = drawContours(mat.size(), filterContours);
-        Imgcodecs.imwrite("dist\\picb-final-" + fileName + ".PNG", line);
-        return filterContours;
+        return result;
+    }
+
+    private static List<Point> dfs(Map<Point, List<Point>> graph, Point current, Set<Point> visited, List<Point> path) {
+        visited.add(current);
+        path.add(current);
+
+        List<Point> longestPath = new ArrayList<>(path);
+        for (Point neighbor : graph.get(current)) {
+            if (!visited.contains(neighbor)) {
+                List<Point> newPath = dfs(graph, neighbor, visited, new ArrayList<>(path));
+                if (newPath.size() > longestPath.size()) {
+                    longestPath = newPath;
+                }
+            }
+        }
+
+        return longestPath;
+    }
+
+    public static boolean isContinuous(Point point1, Point point2, double absXDelta, double absYDelta, double slope) {
+        return Math.abs(point1.x - point2.x) < absXDelta && Math.abs(point1.y - point2.y) < absYDelta && Math.abs(point1.y - point2.y) / Math.abs(point1.x - point2.x) > slope;
     }
 
     /**
@@ -199,16 +174,5 @@ public class Img {
             dVar+=(x[i]-dAve)*(x[i]-dAve);
         }
         return dVar/m;
-    }
-
-    public static double avg(List<Double> data) {
-        if(data == null || data.size() ==0) {
-            return 0;
-        }
-        double sum = 0D;
-        for(Double a : data) {
-            sum += a;
-        }
-        return sum/data.size();
     }
 }

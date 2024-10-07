@@ -32,6 +32,7 @@ public class FXApplication extends Application {
         mainPanel.initImg();
         mainPanel.initValue();
         mainPanel.initBind();
+        mainPanel.refreshAllImage();
     }
 
 
